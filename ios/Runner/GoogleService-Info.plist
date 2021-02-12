@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>255275612635-3nr0f0dv5moj61mfrp3st5j4r3rcf8dm.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.255275612635-3nr0f0dv5moj61mfrp3st5j4r3rcf8dm</string>
+	<key>API_KEY</key>
+	<string>AIzaSyDF3VUzPJ1VAszSqiFiY4GA0zH7wN14mkU</string>
+	<key>GCM_SENDER_ID</key>
+	<string>255275612635</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.nova.novagreen</string>
+	<key>PROJECT_ID</key>
+	<string>nova-green-999c8</string>
+	<key>STORAGE_BUCKET</key>
+	<string>nova-green-999c8.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:255275612635:ios:1f7a8308385bcdb59ccffe</string>
+</dict>
+</plist>

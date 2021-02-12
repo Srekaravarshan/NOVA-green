@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "255275612635",
+    "project_id": "nova-green-999c8",
+    "storage_bucket": "nova-green-999c8.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:255275612635:android:2a9bc6a4d8f4c2869ccffe",
+        "android_client_info": {
+          "package_name": "com.nova.novagreen"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "255275612635-s50rubfhiud354crlun8ggstiv3sq6ud.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCQMTaCqTKk0hC0ZKMFCu6CuQCVqecHGIM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "255275612635-s50rubfhiud354crlun8ggstiv3sq6ud.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
