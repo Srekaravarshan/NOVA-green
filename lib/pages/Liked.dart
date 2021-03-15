@@ -22,6 +22,23 @@ class _LikedState extends State<Liked> {
     }
   }
 
+  Future getCartItems(LikedModel liked, String uid) async {
+    DocumentSnapshot doc =
+        await productsRef.doc(liked.productId).get().then((doc) async {
+      if (doc.exists) {
+        return doc;
+      } else {
+        await likedRef
+            .doc(uid)
+            .collection('liked')
+            .doc(liked.productId)
+            .delete();
+        return null;
+      }
+    });
+    return doc;
+  }
+
   @override
   Widget build(BuildContext context) {
     final User _firebaseUser = context.watch<User>();
@@ -79,10 +96,17 @@ class _LikedState extends State<Liked> {
                                   LikedModel liked = LikedModel.fromDocument(
                                       snapshot.data.docs.elementAt(index));
                                   return FutureBuilder(
-                                      future: productsRef
-                                          .doc(liked.productId)
-                                          .get(),
+                                      future: getCartItems(
+                                          liked, _firebaseUser.uid),
                                       builder: (context, snapshot) {
+                                        if (snapshot.data == null) {
+                                          return Container(
+                                            height: 300,
+                                            child: Center(
+                                                child:
+                                                    Text('No liked products')),
+                                          );
+                                        }
                                         if (!snapshot.hasData) {
                                           return Container(
                                               height: MediaQuery.of(context)

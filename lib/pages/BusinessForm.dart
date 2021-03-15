@@ -125,6 +125,7 @@ class _BusinessFormState extends State<BusinessForm> {
       'rating': 0,
       'products': [],
       'photos': [],
+      'reviewedUsers': {}
     });
   }
 

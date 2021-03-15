@@ -22,6 +22,19 @@ class _CartState extends State<Cart> {
     }
   }
 
+  Future getCartItems(CartModel cart, String uid) async {
+    DocumentSnapshot doc =
+        await productsRef.doc(cart.productId).get().then((doc) async {
+      if (doc.exists) {
+        return doc;
+      } else {
+        await cartRef.doc(uid).collection('cart').doc(cart.productId).delete();
+        return null;
+      }
+    });
+    return doc;
+  }
+
   @override
   Widget build(BuildContext context) {
     final User _firebaseUser = context.watch<User>();
@@ -80,13 +93,19 @@ class _CartState extends State<Cart> {
                                       snapshot.data.docs.elementAt(index));
                                   return FutureBuilder(
                                       future:
-                                          productsRef.doc(cart.productId).get(),
+                                          getCartItems(cart, _firebaseUser.uid),
                                       builder: (context, snapshot) {
+                                        if (snapshot.data == null) {
+                                          return Container(
+                                            height: 300,
+                                            child: Center(
+                                                child: Text(
+                                                    'No items in the cart')),
+                                          );
+                                        }
                                         if (!snapshot.hasData) {
                                           return Container(
-                                              height: MediaQuery.of(context)
-                                                  .size
-                                                  .height,
+                                              height: 300,
                                               child: Center(
                                                   child:
                                                       CircularProgressIndicator()));
@@ -94,7 +113,6 @@ class _CartState extends State<Cart> {
                                         ProductModel product =
                                             ProductModel.fromDocument(
                                                 snapshot.data);
-
                                         SchedulerBinding.instance
                                             .addPostFrameCallback(
                                                 (_) => setState(() {

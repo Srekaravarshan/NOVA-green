@@ -4,6 +4,7 @@ import 'package:nova_green/Models/ProductModel.dart';
 import 'package:nova_green/pages/ShowProduct.dart';
 
 Widget productCard(ProductModel product, BuildContext context, String userId) {
+  String tag = 'productImageCart';
   return InkWell(
     onTap: () {
       Navigator.push(
@@ -12,6 +13,7 @@ Widget productCard(ProductModel product, BuildContext context, String userId) {
               builder: (context) => ShowProduct(
                     productId: product.productId,
                     userId: userId,
+                    tag: tag,
                   )));
     },
     child: Container(
@@ -25,7 +27,7 @@ Widget productCard(ProductModel product, BuildContext context, String userId) {
       child: Column(
         children: [
           Hero(
-            tag: 'productImage',
+            tag: tag,
             child: Container(
               height: 120,
               width: 180,
@@ -47,50 +49,55 @@ Widget productCard(ProductModel product, BuildContext context, String userId) {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(product.name,
-                            style: TextStyle(
-                                fontSize: 20,
-                                color: Color(0xFF43291F),
-                                fontWeight: FontWeight.bold)),
-                        Text('₹ ${product.price}',
+                Flexible(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            product.name,
                             style: TextStyle(
                                 fontSize: 18,
-                                color: Color(0xFF226F54),
-                                fontWeight: FontWeight.bold)),
-                      ],
-                    ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(product.storeName,
-                            style: TextStyle(
-                                fontSize: 12,
-                                color: Color(0xFF226F54),
-                                fontStyle: FontStyle.italic)),
-                        SizedBox(
-                          height: 18,
-                          child: ListView.builder(
-                            itemCount: 5,
-                            physics: NeverScrollableScrollPhysics(),
-                            scrollDirection: Axis.horizontal,
-                            shrinkWrap: true,
-                            itemBuilder: (context, index) => Icon(Icons.star,
-                                size: 18,
-                                color: index < product.rating
-                                    ? Color(0xFF226F54)
-                                    : Colors.grey),
+                                color: Color(0xFF43291F),
+                                fontWeight: FontWeight.bold),
+                            overflow: TextOverflow.ellipsis,
                           ),
-                        ),
-                      ],
-                    )
-                  ],
+                          Text('₹ ${product.price}',
+                              style: TextStyle(
+                                  fontSize: 18,
+                                  color: Color(0xFF226F54),
+                                  fontWeight: FontWeight.bold)),
+                        ],
+                      ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(product.storeName,
+                              style: TextStyle(
+                                  fontSize: 12,
+                                  color: Color(0xFF226F54),
+                                  fontStyle: FontStyle.italic)),
+                          SizedBox(
+                            height: 18,
+                            child: ListView.builder(
+                              itemCount: 5,
+                              physics: NeverScrollableScrollPhysics(),
+                              scrollDirection: Axis.horizontal,
+                              shrinkWrap: true,
+                              itemBuilder: (context, index) => Icon(Icons.star,
+                                  size: 18,
+                                  color: index < product.rating
+                                      ? Color(0xFF226F54)
+                                      : Colors.grey),
+                            ),
+                          ),
+                        ],
+                      )
+                    ],
+                  ),
                 ),
                 Container(
                   height: 90,

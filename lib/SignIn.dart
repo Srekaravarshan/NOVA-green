@@ -1,7 +1,9 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:nova_green/AuthService.dart';
 import 'package:nova_green/Extension.dart';
 import 'package:nova_green/constants.dart';
+import 'package:nova_green/main.dart';
 import 'package:provider/provider.dart';
 
 // final TextEditingController _emailController = new TextEditingController();
@@ -64,63 +66,69 @@ class _SignInState extends State<SignIn> {
                             Text('Create account',
                                 style: TextStyle(fontSize: 20)),
                             SizedBox(height: 20),
-                            TextFormField(
-                              decoration: InputDecoration(
-                                border: OutlineInputBorder(),
-                                fillColor: Colors.grey[100],
-                                filled: true,
-                                labelText: 'Email address',
-                              ),
-                              keyboardType: TextInputType.emailAddress,
-                            ),
-                            SizedBox(height: 10),
-                            TextFormField(
-                              obscureText: true,
-                              decoration: InputDecoration(
-                                border: OutlineInputBorder(),
-                                fillColor: Colors.grey[100],
-                                filled: true,
-                                labelText: 'Password',
-                              ),
-                            ),
-                            SizedBox(height: 20),
-                            InkWell(
-                              onTap: () async {},
-                              child: Container(
-                                height: 50,
-                                decoration: BoxDecoration(
-                                    color: Color(0xFFFF7357),
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(4))),
-                                child: Text(
-                                  'Sign up',
-                                  style: TextStyle(
-                                      color: Colors.white,
-                                      fontFamily: 'Ubuntu',
-                                      fontSize: 14),
-                                ).center(),
-                              ),
-                            ),
-                            SizedBox(height: 15),
-                            Row(
-                              children: [
-                                Expanded(
-                                    child: Divider(thickness: 1.5, height: 0)
-                                        .center()),
-                                SizedBox(width: 7),
-                                Text('or', style: TextStyle(fontSize: 14)),
-                                SizedBox(width: 7),
-                                Expanded(
-                                    child: Divider(thickness: 1.5, height: 0)
-                                        .center())
-                              ],
-                            ),
-                            SizedBox(height: 15),
+                            // TextFormField(
+                            //   decoration: InputDecoration(
+                            //     border: OutlineInputBorder(),
+                            //     fillColor: Colors.grey[100],
+                            //     filled: true,
+                            //     labelText: 'Email address',
+                            //   ),
+                            //   keyboardType: TextInputType.emailAddress,
+                            // ),
+                            // SizedBox(height: 10),
+                            // TextFormField(
+                            //   obscureText: true,
+                            //   decoration: InputDecoration(
+                            //     border: OutlineInputBorder(),
+                            //     fillColor: Colors.grey[100],
+                            //     filled: true,
+                            //     labelText: 'Password',
+                            //   ),
+                            // ),
+                            // SizedBox(height: 20),
+                            // InkWell(
+                            //   onTap: () async {},
+                            //   child: Container(
+                            //     height: 50,
+                            //     decoration: BoxDecoration(
+                            //         color: Color(0xFFFF7357),
+                            //         borderRadius:
+                            //             BorderRadius.all(Radius.circular(4))),
+                            //     child: Text(
+                            //       'Sign up',
+                            //       style: TextStyle(
+                            //           color: Colors.white,
+                            //           fontFamily: 'Ubuntu',
+                            //           fontSize: 14),
+                            //     ).center(),
+                            //   ),
+                            // ),
+                            // SizedBox(height: 15),
+                            // Row(
+                            //   children: [
+                            //     Expanded(
+                            //         child: Divider(thickness: 1.5, height: 0)
+                            //             .center()),
+                            //     SizedBox(width: 7),
+                            //     Text('or', style: TextStyle(fontSize: 14)),
+                            //     SizedBox(width: 7),
+                            //     Expanded(
+                            //         child: Divider(thickness: 1.5, height: 0)
+                            //             .center())
+                            //   ],
+                            // ),
+                            // SizedBox(height: 15),
                             InkWell(
                               onTap: () async {
                                 await context
                                     .read<AuthService>()
                                     .signUpWithGoogle();
+                                final User _firebaseUser =
+                                    Provider.of<User>(context, listen: false);
+                                await addressRef.doc(_firebaseUser.uid).set({
+                                  'addresses': [],
+                                  'userId': _firebaseUser.uid
+                                });
                               },
                               child: Container(
                                 height: 50,

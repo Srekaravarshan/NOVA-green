@@ -1,8 +1,13 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:nova_green/AuthService.dart';
+import 'package:nova_green/pages/Addresses.dart';
 import 'package:nova_green/pages/AgreeForSell.dart';
 import 'package:nova_green/pages/Cart.dart';
 import 'package:nova_green/pages/Liked.dart';
+import 'package:nova_green/pages/News.dart';
+import 'package:nova_green/pages/SavedBlogs.dart';
+import 'package:nova_green/pages/YourOrder.dart';
 import 'package:provider/provider.dart';
 
 class Profile extends StatefulWidget {
@@ -47,15 +52,29 @@ class _ProfileState extends State<Profile> {
                           SizedBox(height: 70),
                           Text(
                             _user.displayName,
+                            textAlign: TextAlign.center,
                             style: TextStyle(
                                 fontSize: 28, fontWeight: FontWeight.bold),
                           ),
                           SizedBox(height: 50),
                           profileDivider(),
-                          profileTile(title: 'Your Orders', onPressed: () {}),
+                          profileTile(
+                              title: 'Your Orders',
+                              onPressed: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => YourOrder()));
+                              }),
                           profileDivider(),
-                          profileTile(title: 'Addresses', onPressed: () {}),
-                          profileTile(title: 'Edit Profile', onPressed: () {}),
+                          profileTile(
+                              title: 'Addresses',
+                              onPressed: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => Addresses()));
+                              }),
                           profileTile(title: 'Purchases', onPressed: () {}),
                           profileDivider(),
                           profileTile(
@@ -65,6 +84,25 @@ class _ProfileState extends State<Profile> {
                                     context,
                                     MaterialPageRoute(
                                         builder: (context) => Agree()));
+                              }),
+                          profileDivider(),
+                          profileTile(
+                              title: 'My posts',
+                              onPressed: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            News(userId: _user.uid)));
+                              }),
+                          profileTile(
+                              title: 'Saved posts',
+                              onPressed: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            SavedBlogs(userId: _user.uid)));
                               }),
                           profileDivider(),
                           profileTile(
@@ -84,7 +122,11 @@ class _ProfileState extends State<Profile> {
                                         builder: (context) => Cart()));
                               }),
                           profileDivider(),
-                          profileTile(title: 'Logout', onPressed: () {}),
+                          profileTile(
+                              title: 'Logout',
+                              onPressed: () async {
+                                await context.read<AuthService>().signOut();
+                              }),
                           profileDivider(),
                           SizedBox(height: 70),
                         ],

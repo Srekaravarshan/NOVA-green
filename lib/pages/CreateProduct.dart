@@ -5,15 +5,20 @@ import 'package:flutter/material.dart';
 import 'package:image/image.dart' as Im;
 import 'package:image_picker/image_picker.dart';
 import 'package:nova_green/Extension.dart';
+import 'package:nova_green/Models/ProductModel.dart';
 import 'package:nova_green/Models/StoreModel.dart';
 import 'package:nova_green/main.dart';
+import 'package:nova_green/widgets/productCard.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:uuid/uuid.dart';
 
 class CreateProduct extends StatefulWidget {
-  final StoreModel store;
+  final String storeId;
+  final ProductModel product;
 
-  const CreateProduct({Key key, this.store}) : super(key: key);
+  const CreateProduct({Key key, this.product, @required this.storeId})
+      : super(key: key);
+
   @override
   _CreateProductState createState() => _CreateProductState();
 }
@@ -34,6 +39,26 @@ class _CreateProductState extends State<CreateProduct> {
   String _category = 'Indoor';
   bool fileError = false;
   String uuid = Uuid().v4();
+  String _coverUrl = '';
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.product != null) {
+      setState(() {
+        _coverUrl = widget.product.mediaUrl;
+        _shade = widget.product.shade;
+        _waterLevel = widget.product.waterLevel;
+        _plantType = widget.product.plantType;
+        _category = widget.product.category;
+        _nameController.text = widget.product.name;
+        _priceController.text = widget.product.price;
+        _descriptionController.text = widget.product.description;
+        _weightController.text = widget.product.weight;
+        _temperatureController.text = widget.product.temperature;
+      });
+    }
+  }
 
   handleTakePhoto() async {
     Navigator.pop(context);
@@ -90,8 +115,25 @@ class _CreateProductState extends State<CreateProduct> {
   }
 
   clearImage() {
+    if (_coverUrl != '') {
+      String filePath =
+          // 'https://firebasestorage.googleapis.com/v0/b/nova-green-999c8.appspot.com/o/product_8efdc633-f740-49c9-be1b-d37fe110c3e2.jpg?alt=media&token=a1fef450-2f50-4d78-bdbf-c6f08635484d'
+          _coverUrl
+              .replaceAll(
+                  new RegExp(
+                      r'https://firebasestorage.googleapis.com/v0/b/nova-green-999c8.appspot.com/o/'),
+                  '')
+              .split('?')[0];
+
+      FirebaseStorage.instance
+          .ref()
+          .child(filePath)
+          .delete()
+          .then((_) => print('Successfully deleted $filePath storage item'));
+    }
     setState(() {
       file = null;
+      _coverUrl = '';
     });
   }
 
@@ -113,45 +155,31 @@ class _CreateProductState extends State<CreateProduct> {
     return downloadUrl;
   }
 
-  createPostInFirestore({
-    @required String mediaUrl,
-    @required String productType,
-    @required String name,
-    @required String price,
-    @required String weight,
-    @required String description,
-    @required String temperature,
-    @required String shade,
-    @required String waterLevel,
-    @required String plantType,
-    @required List photos,
-    @required String productId,
-    @required String storeId,
-    @required List ratingMap,
-    @required int rating,
-    @required String storeName,
-    @required String category,
-  }) async {
-    widget.store.products.add({
-      'mediaUrl': mediaUrl,
-      'productType': productType,
-      'name': name,
-      'price': price,
-      'weight': weight,
-      'description': description,
-      'temperature': temperature,
-      'shade': shade,
-      'waterLevel': waterLevel,
-      'plantType': plantType,
-      'photos': photos,
-      'productId': productId,
-      'storeId': storeId,
-      'ratingMap': ratingMap,
-      'rating': rating,
-      'storeName': storeName,
-      'category': category
-    });
-    await sellersRef.doc(storeId).update({'products': widget.store.products});
+  createPostInFirestore(
+      {@required String mediaUrl,
+      @required String productType,
+      @required String name,
+      @required String price,
+      @required String weight,
+      @required String description,
+      @required String temperature,
+      @required String shade,
+      @required String waterLevel,
+      @required String plantType,
+      @required List photos,
+      @required String productId,
+      @required String storeId,
+      @required List ratingMap,
+      @required int rating,
+      @required String storeName,
+      @required String category,
+      @required StoreModel store}) async {
+    if (widget.product == null) {
+      store.products.add({
+        'productId': productId,
+      });
+      await sellersRef.doc(storeId).update({'products': store.products});
+    }
     await productsRef.doc(productId).set({
       'mediaUrl': mediaUrl,
       'productType': productType,
@@ -168,7 +196,10 @@ class _CreateProductState extends State<CreateProduct> {
       'storeId': storeId,
       'ratingMap': ratingMap,
       'rating': rating,
-      'storeName': storeName
+      'storeName': storeName,
+      'category': category,
+      'nameFS': name.replaceAll(' ', '').toLowerCase(),
+      'reviewedUsers': {}
     });
   }
 
@@ -176,26 +207,35 @@ class _CreateProductState extends State<CreateProduct> {
     setState(() {
       isUploading = true;
     });
-    await compressImage(uuid);
-    String mediaUrl = await uploadImage(file, uuid);
+    StoreModel store =
+        StoreModel.fromDocument(await sellersRef.doc(widget.storeId).get());
+    String mediaUrl;
+    if (_coverUrl != '') {
+      mediaUrl = _coverUrl;
+    } else {
+      await compressImage(uuid);
+      mediaUrl = await uploadImage(file, uuid);
+    }
     createPostInFirestore(
-        name: _nameController.text.trim(),
-        description: _descriptionController.text.trim(),
-        mediaUrl: mediaUrl,
-        productType: _productType,
-        price: _priceController.text.trim(),
-        weight: _weightController.text.trim(),
-        temperature: _temperatureController.text.trim(),
-        shade: _shade,
-        waterLevel: _waterLevel,
-        plantType: _plantType,
-        photos: [],
-        productId: uuid,
-        storeId: widget.store.userId,
-        rating: 0,
-        ratingMap: [],
-        storeName: widget.store.name,
-        category: _category);
+      name: _nameController.text.trim(),
+      description: _descriptionController.text.trim(),
+      mediaUrl: mediaUrl,
+      productType: _productType,
+      price: _priceController.text.trim(),
+      weight: _weightController.text.trim(),
+      temperature: _temperatureController.text.trim(),
+      shade: _shade,
+      waterLevel: _waterLevel,
+      plantType: _plantType,
+      photos: widget.product == null ? [] : widget.product.photos,
+      productId: widget.product == null ? uuid : widget.product.productId,
+      storeId: store.userId,
+      rating: widget.product == null ? 0 : widget.product.rating,
+      ratingMap: widget.product == null ? [] : widget.product.ratingMap,
+      storeName: store.name,
+      category: _category,
+      store: store,
+    );
   }
 
   @override
@@ -208,7 +248,7 @@ class _CreateProductState extends State<CreateProduct> {
           child: SingleChildScrollView(
             child: Column(
               children: [
-                file == null
+                file == null && _coverUrl == ''
                     ? SafeArea(
                         child: Stack(
                           children: [
@@ -273,17 +313,45 @@ class _CreateProductState extends State<CreateProduct> {
                                                   ),
                                                   SizedBox(height: 15),
                                                   Container(
-                                                    height: 150,
+                                                    height: 250,
                                                     width: 150,
                                                     decoration: BoxDecoration(
                                                         color: Colors.grey[200],
                                                         borderRadius:
                                                             BorderRadius.all(
                                                                 Radius.circular(
-                                                                    10))),
+                                                                    10)),
+                                                        image: DecorationImage(
+                                                            image: NetworkImage(
+                                                                'https://firebasestorage.googleapis.com/v0/b/nova-green-999c8.appspot.com/o/pg-areca-palm-800x800.jpg?alt=media&token=ca3e41bc-bc06-412e-99d9-c4817598f9b3'),
+                                                            fit: BoxFit.cover)),
                                                   ),
                                                   //TODO: product card to be added
-                                                  SizedBox(height: 25),
+                                                  SizedBox(height: 50),
+                                                  productCard(
+                                                      ProductModel(
+                                                          'https://firebasestorage.googleapis.com/v0/b/nova-green-999c8.appspot.com/o/pg-areca-palm-800x800.jpg?alt=media&token=ca3e41bc-bc06-412e-99d9-c4817598f9b3',
+                                                          '',
+                                                          'Coconut tree',
+                                                          '500',
+                                                          '2',
+                                                          '',
+                                                          '',
+                                                          '',
+                                                          '',
+                                                          '',
+                                                          [],
+                                                          '',
+                                                          '',
+                                                          [],
+                                                          0,
+                                                          'Infinity green',
+                                                          '',
+                                                          '',
+                                                          {}),
+                                                      context,
+                                                      widget.storeId),
+                                                  SizedBox(height: 50),
                                                 ],
                                               ),
                                             ));
@@ -312,7 +380,9 @@ class _CreateProductState extends State<CreateProduct> {
                               width: MediaQuery.of(context).size.width,
                               decoration: BoxDecoration(
                                   image: DecorationImage(
-                                      image: FileImage(file),
+                                      image: _coverUrl != ''
+                                          ? NetworkImage(_coverUrl)
+                                          : FileImage(file),
                                       fit: BoxFit.contain)),
                             ),
                             Positioned(
@@ -452,7 +522,7 @@ class _CreateProductState extends State<CreateProduct> {
                           }
                           return null;
                         },
-                        keyboardType: TextInputType.name,
+                        keyboardType: TextInputType.number,
                       ),
                       SizedBox(height: 15),
                       TextFormField(
@@ -471,7 +541,7 @@ class _CreateProductState extends State<CreateProduct> {
                           }
                           return null;
                         },
-                        keyboardType: TextInputType.name,
+                        keyboardType: TextInputType.number,
                       ),
                       SizedBox(height: 15),
                       TextFormField(
@@ -647,26 +717,8 @@ class _CreateProductState extends State<CreateProduct> {
                       ),
                       SizedBox(height: 50),
                       InkWell(
-                        //TODO: build preview sheet
-                        child: Container(
-                          height: 60,
-                          width: MediaQuery.of(context).size.width,
-                          decoration: BoxDecoration(
-                            border:
-                                Border.all(color: Color(0xFF226F54), width: 2),
-                            borderRadius: BorderRadius.all(Radius.circular(4)),
-                          ),
-                          child: Center(
-                            child: Text('Preview',
-                                style: TextStyle(
-                                    color: Color(0xFF226F54), fontSize: 24)),
-                          ),
-                        ),
-                      ),
-                      SizedBox(height: 15),
-                      InkWell(
-                        onTap: () {
-                          if (file == null) {
+                        onTap: () async {
+                          if (file == null && _coverUrl == '') {
                             setState(() {
                               fileError = true;
                             });
@@ -677,7 +729,7 @@ class _CreateProductState extends State<CreateProduct> {
                             });
                           }
                           if (_formKey.currentState.validate()) {
-                            handleSubmit(uuid);
+                            await handleSubmit(uuid);
                             Navigator.pop(context);
                           }
                           setState(() {
@@ -685,7 +737,7 @@ class _CreateProductState extends State<CreateProduct> {
                           });
                         },
                         child: Container(
-                          height: 60,
+                          height: 45,
                           width: MediaQuery.of(context).size.width,
                           decoration: BoxDecoration(
                             color: isUploading
@@ -697,12 +749,12 @@ class _CreateProductState extends State<CreateProduct> {
                               ? Center(
                                   child: Text('Uploading...',
                                       style: TextStyle(
-                                          color: Colors.white, fontSize: 24)),
+                                          color: Colors.white, fontSize: 18)),
                                 )
                               : Center(
                                   child: Text('Upload',
                                       style: TextStyle(
-                                          color: Colors.white, fontSize: 24)),
+                                          color: Colors.white, fontSize: 18)),
                                 ),
                         ),
                       )

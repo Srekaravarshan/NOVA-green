@@ -8,6 +8,7 @@ import 'package:nova_green/SignIn.dart';
 import 'package:nova_green/pages/Cart.dart';
 import 'package:nova_green/pages/Home.dart';
 import 'package:nova_green/pages/Liked.dart';
+import 'package:nova_green/pages/News.dart';
 import 'package:nova_green/pages/Profile.dart';
 import 'package:provider/provider.dart';
 
@@ -16,6 +17,10 @@ final sellersRef = FirebaseFirestore.instance.collection('sellers');
 final productsRef = FirebaseFirestore.instance.collection('products');
 final cartRef = FirebaseFirestore.instance.collection('carts');
 final likedRef = FirebaseFirestore.instance.collection('liked');
+final postsRef = FirebaseFirestore.instance.collection('posts');
+final savedRef = FirebaseFirestore.instance.collection('saved');
+final commentRef = FirebaseFirestore.instance.collection('comments');
+final addressRef = FirebaseFirestore.instance.collection('addresses');
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -36,7 +41,11 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         title: 'NOVA green',
         theme: ThemeData(
-            fontFamily: 'Ubuntu', scaffoldBackgroundColor: Colors.white),
+          appBarTheme:
+              AppBarTheme(iconTheme: IconThemeData(color: Colors.black)),
+          fontFamily: 'Ubuntu',
+          scaffoldBackgroundColor: Colors.white,
+        ),
         home: AuthenticationWrapper(),
       ),
     );
@@ -92,7 +101,7 @@ class _MainScreenState extends State<MainScreen>
     pages.add(Home());
     pages.add(Cart());
     pages.add(Liked());
-    pages.add(Container());
+    pages.add(News());
     pages.add(Profile());
     _pageController = PageController(initialPage: 4, keepPage: true);
     super.initState();
@@ -117,6 +126,13 @@ class _MainScreenState extends State<MainScreen>
       onTap: () {
         setState(() {
           _currentPageIndex = index;
+          if (isDrawerOpen) {
+            xOffset = 0;
+            yOffset = 0;
+            scaleFactor = 1;
+            _controller.reverse();
+            isDrawerOpen = !isDrawerOpen;
+          }
         });
         _pageController.jumpToPage(index);
       },
@@ -147,57 +163,62 @@ class _MainScreenState extends State<MainScreen>
         Scaffold(
           backgroundColor: Color(0xFF226F54),
           body: SafeArea(
-            child: Container(
-              width: MediaQuery.of(context).size.width,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    margin: EdgeInsets.all(30),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        CircleAvatar(
-                          backgroundColor: Colors.green,
-                          radius: 30,
-                          backgroundImage: NetworkImage(widget.user.photoURL),
-                        ),
-                        SizedBox(width: 10),
-                        Text(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  margin: EdgeInsets.all(30),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      CircleAvatar(
+                        backgroundColor: Colors.green,
+                        radius: 30,
+                        backgroundImage: NetworkImage(widget.user.photoURL),
+                      ),
+                      SizedBox(width: 10),
+                      Expanded(
+                        child: Text(
                           widget.user.displayName,
+                          overflow: TextOverflow.ellipsis,
                           style: TextStyle(
                               color: Colors.white,
                               fontSize: 22,
                               fontWeight: FontWeight.bold),
-                        )
-                      ],
-                    ),
-                  ),
-                  SlideTransition(
-                    position: _slideAnimation,
-                    child: ScaleTransition(
-                      scale: _scaleAnimation,
-                      child: Padding(
-                        padding: const EdgeInsets.all(15.0),
-                        child: Column(
-                          children: [
-                            menu(Icons.home_outlined, Icons.home, 'Home', 0),
-                            menu(Icons.shopping_bag_outlined,
-                                Icons.shopping_bag, 'Cart', 1),
-                            menu(Icons.favorite_border, Icons.favorite, 'Liked',
-                                2),
-                            menu(Icons.pages_outlined, Icons.pages, 'News', 3),
-                            menu(Icons.account_circle_outlined,
-                                Icons.account_circle, 'Profile', 4),
-                            SizedBox(height: 80)
-                          ],
                         ),
+                      )
+                    ],
+                  ),
+                ),
+                SlideTransition(
+                  position: _slideAnimation,
+                  child: ScaleTransition(
+                    scale: _scaleAnimation,
+                    child: Padding(
+                      padding: const EdgeInsets.all(15.0),
+                      child: Column(
+                        children: [
+                          menu(Icons.home_outlined, Icons.home, 'Home', 0),
+                          menu(Icons.shopping_bag_outlined, Icons.shopping_bag,
+                              'Cart', 1),
+                          menu(Icons.favorite_border, Icons.favorite, 'Liked',
+                              2),
+                          menu(Icons.pages_outlined, Icons.pages, 'News', 3),
+                          menu(Icons.account_circle_outlined,
+                              Icons.account_circle, 'Profile', 4),
+                          SizedBox(height: 80)
+                        ],
                       ),
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.all(15.0),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(15.0),
+                  child: InkWell(
+                    onTap: () async {
+                      await context.read<AuthService>().signOut();
+                    },
                     child: ListTile(
                         leading: Icon(
                           Icons.logout,
@@ -206,8 +227,8 @@ class _MainScreenState extends State<MainScreen>
                         title: Text('Logout',
                             style: TextStyle(color: Colors.white))),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
         ),

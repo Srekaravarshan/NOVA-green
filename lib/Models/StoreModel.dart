@@ -11,6 +11,7 @@ class StoreModel {
   final List _products;
   final List _photos;
   final String _userId;
+  final Map _reviewedUsers;
 
   StoreModel(
       this._name,
@@ -22,20 +23,23 @@ class StoreModel {
       this._rating,
       this._products,
       this._photos,
-      this._userId);
+      this._userId,
+      this._reviewedUsers);
 
   factory StoreModel.fromDocument(DocumentSnapshot doc) {
     return StoreModel(
-        doc['name'],
-        doc['description'],
-        doc['address'],
-        doc['phoneNumber'],
-        doc['cover'],
-        doc['ratingMap'],
-        doc['rating'],
-        doc['products'],
-        doc['photos'],
-        doc['userId']);
+      doc['name'],
+      doc['description'],
+      doc['address'],
+      doc['phoneNumber'],
+      doc['cover'],
+      doc['ratingMap'],
+      doc['rating'],
+      doc['products'],
+      doc['photos'],
+      doc['userId'],
+      doc['reviewedUsers'],
+    );
   }
 
   List get photos => _photos;
@@ -57,4 +61,6 @@ class StoreModel {
   String get name => _name;
 
   String get userId => _userId;
+
+  Map get reviewedUsers => _reviewedUsers;
 }

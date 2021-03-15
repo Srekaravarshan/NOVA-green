@@ -18,6 +18,8 @@ class ProductModel {
   final int _rating;
   final String _storeName;
   final String _category;
+  final String _nameFS;
+  final Map _reviewedUsers;
 
   ProductModel(
       this._mediaUrl,
@@ -36,7 +38,9 @@ class ProductModel {
       this._ratingMap,
       this._rating,
       this._storeName,
-      this._category);
+      this._category,
+      this._nameFS,
+      this._reviewedUsers);
 
   factory ProductModel.fromDocument(DocumentSnapshot doc) {
     return ProductModel(
@@ -57,6 +61,8 @@ class ProductModel {
       doc['rating'],
       doc['storeName'],
       doc['category'],
+      doc['nameFS'],
+      doc['reviewedUsers'],
     );
   }
 
@@ -79,6 +85,8 @@ class ProductModel {
       doc['rating'],
       doc['storeName'],
       doc['category'],
+      doc['nameFS'],
+      doc['reviewedUsers'],
     );
   }
 
@@ -115,4 +123,8 @@ class ProductModel {
   String get storeName => _storeName;
 
   String get category => _category;
+
+  String get nameFS => _nameFS;
+
+  Map get reviewedUsers => _reviewedUsers;
 }
