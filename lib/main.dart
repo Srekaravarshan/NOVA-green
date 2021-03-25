@@ -8,7 +8,6 @@ import 'package:nova_green/SignIn.dart';
 import 'package:nova_green/pages/Cart.dart';
 import 'package:nova_green/pages/Home.dart';
 import 'package:nova_green/pages/Liked.dart';
-import 'package:nova_green/pages/News.dart';
 import 'package:nova_green/pages/Profile.dart';
 import 'package:provider/provider.dart';
 
@@ -101,7 +100,7 @@ class _MainScreenState extends State<MainScreen>
     pages.add(Home());
     pages.add(Cart());
     pages.add(Liked());
-    pages.add(News());
+    // pages.add(News());
     pages.add(Profile());
     _pageController = PageController(initialPage: 4, keepPage: true);
     super.initState();
@@ -204,7 +203,7 @@ class _MainScreenState extends State<MainScreen>
                               'Cart', 1),
                           menu(Icons.favorite_border, Icons.favorite, 'Liked',
                               2),
-                          menu(Icons.pages_outlined, Icons.pages, 'News', 3),
+                          // menu(Icons.pages_outlined, Icons.pages, 'News', 3),
                           menu(Icons.account_circle_outlined,
                               Icons.account_circle, 'Profile', 4),
                           SizedBox(height: 80)
