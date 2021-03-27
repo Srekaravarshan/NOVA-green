@@ -110,11 +110,8 @@ Widget plantCard(ProductModel product, String userId, BuildContext context,
       Navigator.push(
           context,
           MaterialPageRoute(
-              builder: (context) => ShowProduct(
-                    userId: userId,
-                    productId: product.productId,
-                    tag: tag,
-                  )));
+              builder: (context) =>
+                  ShowProduct(userId: userId, productId: product.productId)));
     },
     child: AspectRatio(
       aspectRatio: 170 / 288,
@@ -195,23 +192,27 @@ Widget plantCard(ProductModel product, String userId, BuildContext context,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        product.name,
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 18,
-                            color: textColor),
-                      ),
-                      SizedBox(height: 2),
-                      Text(product.storeName,
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          product.name,
                           style: TextStyle(
-                              fontSize: 12,
-                              fontStyle: FontStyle.italic,
-                              color: textColor))
-                    ],
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                              color: textColor),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        SizedBox(height: 2),
+                        Text(product.storeName,
+                            style: TextStyle(
+                                fontSize: 12,
+                                fontStyle: FontStyle.italic,
+                                color: textColor),
+                            overflow: TextOverflow.ellipsis)
+                      ],
+                    ),
                   ),
                   Text(
                     '₹ ${product.price}',

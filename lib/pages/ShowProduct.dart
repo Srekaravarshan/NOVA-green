@@ -24,13 +24,8 @@ import 'PhotoViewer.dart';
 class ShowProduct extends StatefulWidget {
   final String productId;
   final String userId;
-  final String tag;
 
-  const ShowProduct(
-      {Key key,
-      @required this.userId,
-      @required this.productId,
-      @required this.tag})
+  const ShowProduct({Key key, @required this.userId, @required this.productId})
       : super(key: key);
 
   @override
@@ -185,21 +180,18 @@ class _ShowProductState extends State<ShowProduct> {
                           },
                           child: Stack(
                             children: [
-                              Hero(
-                                tag: widget.tag,
-                                child: Container(
-                                  height: 320,
-                                  width: MediaQuery.of(context).size.width,
-                                  margin: EdgeInsets.all(0),
-                                  decoration: BoxDecoration(
-                                      color: Color(0xFFF4F0BB),
-                                      border:
-                                          Border.all(color: Colors.transparent),
-                                      borderRadius: BorderRadius.zero,
-                                      image: DecorationImage(
-                                          image: NetworkImage(product.mediaUrl),
-                                          fit: BoxFit.cover)),
-                                ),
+                              Container(
+                                height: 320,
+                                width: MediaQuery.of(context).size.width,
+                                margin: EdgeInsets.all(0),
+                                decoration: BoxDecoration(
+                                    color: Color(0xFFF4F0BB),
+                                    border:
+                                        Border.all(color: Colors.transparent),
+                                    borderRadius: BorderRadius.zero,
+                                    image: DecorationImage(
+                                        image: NetworkImage(product.mediaUrl),
+                                        fit: BoxFit.cover)),
                               ),
                               Positioned(
                                   top: 15,
@@ -1111,8 +1103,10 @@ class _ShowProductState extends State<ShowProduct> {
                                           );
                                         });
                                   },
-                                  child: Text('Delete product',
-                                      style: TextStyle(color: Colors.red)))
+                                  child: isOwner
+                                      ? Text('Delete product',
+                                          style: TextStyle(color: Colors.red))
+                                      : Container())
                             ],
                           ),
                         ),

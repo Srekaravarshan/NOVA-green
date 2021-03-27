@@ -481,7 +481,7 @@ class _CreateProductState extends State<CreateProduct> {
                           },
                           underline: Container(),
                           isExpanded: true,
-                          items: <String>['Plant', 'Seeds']
+                          items: <String>['Plant', 'Seed']
                               .map<DropdownMenuItem<String>>((String value) {
                             return DropdownMenuItem<String>(
                               value: value,

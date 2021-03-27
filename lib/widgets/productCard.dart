@@ -4,7 +4,6 @@ import 'package:nova_green/Models/ProductModel.dart';
 import 'package:nova_green/pages/ShowProduct.dart';
 
 Widget productCard(ProductModel product, BuildContext context, String userId) {
-  String tag = 'productImageCart';
   return InkWell(
     onTap: () {
       Navigator.push(
@@ -13,7 +12,6 @@ Widget productCard(ProductModel product, BuildContext context, String userId) {
               builder: (context) => ShowProduct(
                     productId: product.productId,
                     userId: userId,
-                    tag: tag,
                   )));
     },
     child: Container(
@@ -26,22 +24,17 @@ Widget productCard(ProductModel product, BuildContext context, String userId) {
       ),
       child: Column(
         children: [
-          Hero(
-            tag: tag,
-            child: Container(
-              height: 120,
-              width: 180,
-              margin: EdgeInsets.all(4),
-              decoration: BoxDecoration(
-                  color: Color(0xFFF4F0BB),
-                  border: Border.all(color: Colors.grey[200]),
-                  borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(5),
-                      topRight: Radius.circular(5)),
-                  image: DecorationImage(
-                      image: NetworkImage(product.mediaUrl),
-                      fit: BoxFit.cover)),
-            ),
+          Container(
+            height: 120,
+            width: 180,
+            margin: EdgeInsets.all(4),
+            decoration: BoxDecoration(
+                color: Color(0xFFF4F0BB),
+                border: Border.all(color: Colors.grey[200]),
+                borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(5), topRight: Radius.circular(5)),
+                image: DecorationImage(
+                    image: NetworkImage(product.mediaUrl), fit: BoxFit.cover)),
           ),
           Container(
             height: 120,

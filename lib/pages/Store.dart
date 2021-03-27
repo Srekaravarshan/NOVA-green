@@ -263,6 +263,7 @@ class _StoreState extends State<Store> {
                       store.products.isEmpty
                           ? Container()
                           : SingleChildScrollView(
+                              scrollDirection: Axis.horizontal,
                               child: SizedBox(
                                 height: 250,
                                 child: ListView.separated(
